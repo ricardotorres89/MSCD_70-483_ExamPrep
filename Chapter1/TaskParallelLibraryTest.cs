@@ -7,14 +7,15 @@ using Xunit;
 
 namespace Chapter1
 {
-    public class TaskParallelLibraryTest
+    public class ParallelLinq
     {
         [Fact]
         /// <summary>
         /// Invoking multiple Actions in parallel
         /// </summary>
-        public void RunTasksInParallel(){
-            
+        public void RunTasksInParallel()
+        {
+
             Parallel.Invoke(() => Task1(), () => Task2());
         }
 
@@ -22,9 +23,11 @@ namespace Chapter1
         /// <summary>
         /// Parallel for each on IEnumerable, tasks are not completed in the same order they start
         /// </summary>
-        public void RunParallelForEach(){
+        public void RunParallelForEach()
+        {
             var items = Enumerable.Range(0, 500);
-            Parallel.ForEach(items, item => {
+            Parallel.ForEach(items, item =>
+            {
                 WorkOnItem(item);
             });
         }
@@ -33,11 +36,13 @@ namespace Chapter1
         /// <summary>
         /// Parallel for loop usage with start/end index
         /// </summary>
-        public void RunParallelFor(){
+        public void RunParallelFor()
+        {
 
-            var items = Enumerable.Range(0,500).ToArray();
+            var items = Enumerable.Range(0, 500).ToArray();
 
-            Parallel.For(0, items.Length, i => {
+            Parallel.For(0, items.Length, i =>
+            {
                 WorkOnItem(items[i]);
             });
         }
@@ -46,12 +51,14 @@ namespace Chapter1
         /// <summary>
         /// Stops a parallel loop, does not ensure that lower index iterations are performed
         /// </summary>
-        public void StopsParallelLoop(){
-            var items = Enumerable.Range(0,500).ToArray();
+        public void StopsParallelLoop()
+        {
+            var items = Enumerable.Range(0, 500).ToArray();
 
-            var result = Parallel.For(0, items.Count(), (int i, ParallelLoopState loopState) => {
+            var result = Parallel.For(0, items.Count(), (int i, ParallelLoopState loopState) =>
+            {
 
-                if(i == 200)
+                if (i == 200)
                 {
                     loopState.Stop();
                 }
@@ -64,12 +71,14 @@ namespace Chapter1
         /// <summary>
         /// Breaks a parallel loop, guarantees that operations with lower index are performed
         /// </summary>
-        public void BreakParallelLoop(){
-            var items = Enumerable.Range(0,500).ToArray();
+        public void BreakParallelLoop()
+        {
+            var items = Enumerable.Range(0, 500).ToArray();
 
-            var result = Parallel.For(0, items.Count(), (int i, ParallelLoopState loopState) => {
+            var result = Parallel.For(0, items.Count(), (int i, ParallelLoopState loopState) =>
+            {
 
-                if(i == 200)
+                if (i == 200)
                 {
                     loopState.Break();
                 }
@@ -82,14 +91,14 @@ namespace Chapter1
         {
             Console.WriteLine("Task 1 starting");
             Thread.Sleep(2000);
-            Console.WriteLine("Task 1 ending");            
+            Console.WriteLine("Task 1 ending");
         }
 
         private void Task2()
         {
             Console.WriteLine("Task 2 starting");
             Thread.Sleep(2000);
-            Console.WriteLine("Task 2 ending");            
+            Console.WriteLine("Task 2 ending");
         }
 
         private void WorkOnItem(object item)
