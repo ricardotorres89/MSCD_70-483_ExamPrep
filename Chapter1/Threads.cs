@@ -138,6 +138,42 @@ namespace Chapter1
             t2.Join();
         }
 
+        [Fact]
+        /// <summary>
+        /// Thread exposes range of context information
+        /// </summary>
+        public void ThreadExecutionContext(){
+            
+            var currentThread = Thread.CurrentThread;
+
+            Console.WriteLine($"Name: {currentThread.Name}");
+            Console.WriteLine($"Culture: {currentThread.CurrentCulture}");
+            Console.WriteLine($"Priority: {currentThread.Priority}");
+            Console.WriteLine($"Context: {currentThread.ExecutionContext}");
+            Console.WriteLine($"IsBackground: {currentThread.IsBackground}");
+            Console.WriteLine($"IsPool: {currentThread.IsThreadPoolThread}");
+        }
+
+        [Fact]
+        /// <summary>
+        /// Threads are managed objects, so threads are  detroyed
+        /// Thread Pool is a collection of reusable threads that canbe requested and then return to the pool to be used
+        /// QueueUserWorkItem allocates a thread to run the item of work => WaitCallback delegate
+        /// </summary>
+        public void ThreadPoolTest()
+        {
+            for(int i = 0; i < 50; i++)
+            {
+                int stateNumber = i;
+                ThreadPool.QueueUserWorkItem(state => DoWork(stateNumber));
+            }
+        }
+
+        private void DoWork(int stateNumber)
+        {
+            Console.WriteLine($"Doing work: {stateNumber}");
+        }
+
         private ThreadLocal<Random> RandomGenerator = new ThreadLocal<Random>(() =>{
 
             return new Random(2);
