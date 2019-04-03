@@ -110,10 +110,38 @@ namespace Chapter1
         [Fact]
         /// <summary>
         /// ThreadStatic means each thread will have its onw copy of a variable
+        /// To initialize local data at thread level use ThreadLocal<T>
+        /// Expected results are the same for both threads as the random generator is local only
         /// </summary>
-        public void ThreadDataAndLocal(){
+        public void ThreadLocal(){
 
+            Thread t1 = new Thread(() => {
+                for(int i = 0; i < 5; i++)
+                {
+                    Console.WriteLine($"t1 : {RandomGenerator.Value.Next(10)}");
+                    Thread.Sleep(500);
+                }
+            });
+
+            Thread t2 = new Thread(() => {
+                for(int i = 0; i < 5; i++)
+                {
+                    Console.WriteLine($"t2 : {RandomGenerator.Value.Next(10)}");
+                    Thread.Sleep(500);
+                }
+            });
+
+            t1.Start();
+            t2.Start();
+
+            t1.Join();
+            t2.Join();
         }
+
+        private ThreadLocal<Random> RandomGenerator = new ThreadLocal<Random>(() =>{
+
+            return new Random(2);
+        });
 
         private void WorkOnData(object data)
         {
