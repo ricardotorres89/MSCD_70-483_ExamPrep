@@ -128,7 +128,7 @@ namespace Chapter1
                 {
                     Console.WriteLine($"t2 : {RandomGenerator.Value.Next(10)}");
                     Thread.Sleep(500);
-                }
+                };
             });
 
             t1.Start();
@@ -159,6 +159,10 @@ namespace Chapter1
         /// Threads are managed objects, so threads are  detroyed
         /// Thread Pool is a collection of reusable threads that canbe requested and then return to the pool to be used
         /// QueueUserWorkItem allocates a thread to run the item of work => WaitCallback delegate
+        /// Not all Threads will execute at the same time
+        /// Others are qyeyed
+        /// There is no priority management at ThreadPoool level => background prio
+        /// Local state variables are not cleared when threadpool thread is reused => Avoid!
         /// </summary>
         public void ThreadPoolTest()
         {
@@ -172,6 +176,9 @@ namespace Chapter1
         private void DoWork(int stateNumber)
         {
             Console.WriteLine($"Doing work: {stateNumber}");
+            Thread.Sleep(500);
+            Console.WriteLine($"Work finished: {stateNumber}");
+
         }
 
         private ThreadLocal<Random> RandomGenerator = new ThreadLocal<Random>(() =>{
