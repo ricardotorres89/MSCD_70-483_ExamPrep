@@ -146,6 +146,68 @@ namespace Chapter1
             Console.WriteLine("Parent finished");
         }
 
+        [Fact]
+        /// <summary>
+        /// A thread can be aborted but a task must monitor a cancelation token
+        /// </summary>
+        /// <returns></returns>
+        public async void CancelLongRunningTask()
+        {
+            var cancelationToken = new CancellationTokenSource();
+
+            Task.Run(()=> Clock(cancelationToken));
+            await Task.Delay(2000);
+            cancelationToken.Cancel();
+            Console.WriteLine("Clock cancelled");
+        }
+
+        [Fact]
+        public async void CancelTaskWithException()
+        {
+            var cancelationTokenSource = new CancellationTokenSource();
+
+            var clock = Task.Run(()=> ClockWithException(cancelationTokenSource.Token));
+
+            await Task.Delay(3000);
+
+            if(clock.IsCompleted)
+            {
+                Console.WriteLine("Clock task completed");
+            }
+            else
+            {
+                try
+                {
+                    cancelationTokenSource.Cancel();
+                    clock.Wait();
+                }
+                catch(AggregateException ex)
+                {
+                    Console.WriteLine($"Clock stopped: {ex.InnerExceptions[0].ToString()}");
+                }
+            }
+        }
+
+        private void Clock(CancellationTokenSource cancelationTokenSource)
+        {
+            while(!cancelationTokenSource.IsCancellationRequested)
+            {
+                Console.WriteLine("Tick");
+                Thread.Sleep(500);
+            }
+        }
+
+        private void ClockWithException(CancellationToken cancellationToken)
+        {
+            int tickCount = 0;
+            while(!cancellationToken.IsCancellationRequested && tickCount < 20)
+            {
+                tickCount++;
+                Console.WriteLine("Tick");
+                Thread.Sleep(500);
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+        }
         private void DoChild(object state)
         {
             Console.WriteLine($"Child {state} starting");

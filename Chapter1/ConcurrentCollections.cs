@@ -137,6 +137,10 @@ namespace Chapter1
         }
 
         [Fact]
+        /// <summary>
+        /// Using a concurrent dictonary
+        /// Atomic actions to add/update
+        /// </summary>
         public void ConcurrentDictionary(){
             var ages = new ConcurrentDictionary<string,int>();
 
